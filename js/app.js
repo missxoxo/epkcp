@@ -9,9 +9,14 @@ document.querySelector('#login-form').addEventListener('submit', function (event
     return;
   }
   
-  if (user.value.trim() === 'diyana.ghani' && password.value.trim() === 'epkcp2026') {
+  const validUsers = {
+    'diyana.ghani': 'epkcp2026',
+    'user.epkcp': 'epkcp2026'
+  };
+  
+  if (validUsers[user.value.trim()] === password.value.trim()) {
     window.location.href = 'dashboard.html';
   } else {
-    alert('ID Pengguna atau Kata Laluan salah! Sila gunakan ID Pengguna: diyana.ghani dan Kata Laluan: epkcp2026');
+    alert('ID Pengguna atau Kata Laluan salah! Sila gunakan salah satu ID Pengguna: diyana.ghani atau user.epkcp dengan Kata Laluan: epkcp2026');
   }
 });
