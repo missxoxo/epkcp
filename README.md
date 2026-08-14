@@ -1,4 +1,4 @@
-# ePKCP v2 Landing Page
+# ePKCP Landing Page
 
 Static, responsive landing page for Sistem Maklumat Rayuan Cukai (ePKCP) v2.0. Open `index.html` in a modern browser. Built with HTML5, CSS3, SVG and vanilla JavaScript only.
 
