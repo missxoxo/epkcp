@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="ms" style="color-scheme: dark;">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#020b1d">
+  <title>Sistem Maklumat Rayuan Cukai (ePKCP) v2.0</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/animation.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <link rel="stylesheet" href="css/particles.css">
+  <link rel="stylesheet" href="css/semakan-modal.css">
+</head>
+<body>
+  <main class="page-shell">
+    <div id="particles-glow" class="particles-layer" aria-hidden="true"></div>
+    <div id="particles-network" class="particles-layer" aria-hidden="true"></div>
+    <div class="aurora"></div><div class="stars"></div><div class="data-lines"></div>
+
+    <section class="hero" aria-labelledby="page-title">
+      <div class="world-map" aria-hidden="true"></div>
+      <div class="title-block">
+        <p>Sistem Maklumat</p>
+        <h1 id="page-title">Rayuan Cukai</h1>
+        <h2>(ePKCP) <span>v2.0</span></h2>
+      </div>
+      <img class="building" src="assets/svg/wireframe-building.svg" alt="Ilustrasi bangunan digital">
+      <section class="benefits" aria-label="Kelebihan sistem">
+        <article><span class="round-icon"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 5-3.5 8-7 9-3.5-1-7-4-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg></span><div><h3>Selamat &amp; Terjamin</h3><p>Data dilindungi dengan teknologi keselamatan terkini</p></div></article>
+        <article><span class="round-icon"><svg viewBox="0 0 24 24"><path d="M12 21a9 9 0 1 1 6.36-2.64"/><path d="M12 12l4.24-4.24"/><circle cx="12" cy="12" r="1.4" fill="#fff" stroke="#fff"/></svg></span><div><h3>Cekap &amp; Pantas</h3><p>Proses rayuan yang dipermudahkan dan diperkasakan</p></div></article>
+        <article><span class="round-icon"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="1.5"/><path d="M8.5 8h7M8.5 12h7M8.5 16h4.5"/></svg></span><div><h3>Telus &amp; Bertanggungjawab</h3><p>Sistem yang telus dengan jejak audit bagi setiap transaksi</p></div></article>
+      </section>
+    </section>
+
+    <aside class="login-card" aria-label="Log masuk ePKCP">
+      <div class="card-brand">
+        <img class="crest" src="assets/svg/jata-negara.svg" alt="Jata Negara Malaysia">
+        <span>KEMENTERIAN KEWANGAN MALAYSIA</span>
+      </div>
+      <form id="login-form" novalidate>
+        <label for="user">ID Pengguna</label>
+        <div class="input-wrap"><span class="field-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"/><path d="M4 22c.5-5 3-8 8-8s7.5 3 8 8"/></svg></span><input id="user" type="text" placeholder="Masukkan ID Pengguna" autocomplete="username"></div>
+        <label for="password">Kata Laluan</label>
+        <div class="input-wrap"><span class="field-icon"><svg viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="1"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span><input id="password" type="password" placeholder="Masukkan Kata Laluan" autocomplete="current-password"><button class="eye" type="button" aria-label="Papar kata laluan">◉</button></div>
+        <a href="#" class="forgot">Lupa Kata Laluan?</a>
+        <button class="submit" type="submit"><span class="submit-icon"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span>Log Masuk</button>
+      </form>
+      <button type="button" class="check-status" id="open-semakan-modal" aria-haspopup="dialog" aria-controls="semakan-modal"><span class="doc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><circle cx="10" cy="13" r="3"/><path d="m16 19-3-3"/></svg></span><span><strong>Semakan Kes</strong><small>Akses maklumat kes rayuan cukai anda dengan mudah.</small></span><b>❯</b></button>
+    </aside>
+
+    <footer><nav><a href="#">♙ &nbsp; Dasar Privasi</a><a href="#">Dasar Keselamatan</a><a href="#">ⓘ &nbsp; Meja Bantuan</a></nav><span>© 2026 Kementerian Kewangan Malaysia. Hak Cipta Terpelihara.</span></footer>
+  </main>
+
+  <div class="modal-overlay" id="semakan-modal" aria-hidden="true">
+    <div class="modal-backdrop"></div>
+    <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="semakan-modal-title">
+      <button type="button" class="modal-close" data-modal-close aria-label="Tutup">
+        <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+      <div class="modal-scroll">
+        <div class="modal-head">
+          <span class="modal-head-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><circle cx="10" cy="13" r="3"/><path d="m16 19-3-3"/></svg></span>
+          <div>
+            <h2 id="semakan-modal-title">Semakan Kes</h2>
+            <p>Semak status permohonan rayuan cukai anda dengan mudah dan pantas.</p>
+          </div>
+        </div>
+
+        <div class="modal-body">
+          <form id="semakan-form" novalidate>
+            <label for="jenis">Jenis Permohonan <span class="req">*</span></label>
+            <div class="select-wrap">
+              <select id="jenis" name="jenis" required>
+                <option value="" disabled selected>Sila Pilih</option>
+                <option value="Q">Baharu (Borang Q)</option>
+                <option value="N">Pelanjutan Tempoh (Borang N)</option>
+                <option value="R">Borang Relief</option>
+              </select>
+              <svg class="select-chevron" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+
+            <label for="no-cukai">No. Cukai <span class="req">*</span></label>
+            <div class="input-wrap">
+              <span class="field-icon"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></span>
+              <input id="no-cukai" name="no-cukai" type="text" placeholder="Masukkan No. Cukai" autocomplete="off" required>
+            </div>
+            <p class="field-hint">Contoh: SG4xxxxxxx / MOF.PKCP.xxxxxxxxxx</p>
+
+            <div class="pin-field" id="pin-field">
+              <label for="no-pin">No. PIN <span class="req">*</span></label>
+              <div class="input-wrap">
+                <span class="field-icon"><svg viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="1"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span>
+                <input id="no-pin" name="no-pin" type="text" placeholder="Masukkan No. PIN" autocomplete="off">
+              </div>
+            </div>
+
+            <div class="semakan-actions">
+              <button type="submit" class="submit btn-search">
+                <span class="submit-icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span>
+                Cari
+              </button>
+              <button type="reset" class="btn-reset">
+                <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 1 3 6.7"/><path d="M3 21v-6h6"/></svg>
+                Set Semula
+              </button>
+            </div>
+          </form>
+
+          <div class="semakan-results">
+            <div class="semakan-card-head">
+                <span class="semakan-card-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><path d="m9 15 2 2 4-4"/></svg>
+                </span>
+
+                <div>
+                    <h3>Maklumat Kes</h3>
+                    <small>Status Semakan Rayuan</small>
+                </div>
+            </div>
+            <div id="results-body"
+                class="results-state"
+                role="status"
+                aria-live="polite">
+            </div>
+
+            <template id="tpl-empty-result">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M9.1 11.8c.2-.5.7-.8 1.3-.8.7 0 1.2.5 1.2 1.1 0 .4-.2.7-.5.9L10 14v1"/><path d="M10 18h.01"/></svg>
+                <p>Tiada Rekod</p>
+                <small>
+                    Sila lengkapkan borang semakan bagi melihat maklumat kes.
+                </small>
+            </template>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/vendor/particles.min.js"></script>
+  <script src="js/particles-config.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/semakan-modal.js"></script>
+</body>
+</html>

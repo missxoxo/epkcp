@@ -1,0 +1,710 @@
+<!doctype html>
+<html lang="ms">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ePKCP v2.0 - Dashboard KPI</title>
+
+  <!-- Google Fonts: Montserrat for clean look -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/drilldown-modal.css">
+
+  <!-- ApexCharts CDN for beautiful, responsive interactive 3D graphs -->
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  <!-- Reusable click-to-drilldown modal engine, shared with dashboard.html -->
+  <script src="js/drilldown-modal.js"></script>
+</head>
+
+<body>
+
+  <!-- ---- top header navbar ------------------------------------------------- -->
+  <header class="dashboard-header">
+    <div class="header-left">
+      <button class="header-toggle-btn" id="sidebar-toggle" aria-label="Toggle Menu">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <line x1="4" x2="20" y1="12" y2="12" />
+          <line x1="4" x2="20" y1="6" y2="6" />
+          <line x1="4" x2="20" y1="18" y2="18" />
+        </svg>
+      </button>
+      <div class="header-logo-wrap">
+        <img src="assets/svg/jata-negara.svg" alt="Jata Negara Malaysia">
+        <span>ePKCP v2.0</span>
+      </div>
+      <button class="header-home-btn" aria-label="Halaman Utama" onclick="location.href='dashboard.html'">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M17 6h3v4.5h-3V6z M12 3L2 12h3v9h5v-5h4v5h5v-9h3L12 3z" />
+        </svg>
+      </button>
+    </div>
+    <div class="header-right">
+      <button class="header-icon-btn" aria-label="Notifikasi">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 17H2a3 3 0 0 0 3-3V9a7 7 0 0 1 14 0v5a3 3 0 0 0 3 3zm-5.27 4a3 3 0 0 1-5.46 0" />
+        </svg>
+        <span class="badge"></span>
+      </button>
+      <div class="header-user-dropdown-wrap">
+        <button class="header-avatar-btn" id="profile-dropdown-trigger" aria-label="Menu Profil"
+          title="Profil Fatimah Diyana">
+          <img src="assets/img/diyana_avatar.jpg" alt="Avatar">
+        </button>
+        <div class="profile-dropdown" id="profile-dropdown">
+          <div class="dropdown-profile-header">
+            <div class="dropdown-avatar-circle">
+              <img src="assets/img/diyana_avatar.jpg" alt="Avatar">
+            </div>
+            <h3>Fatimah Diyana binti Ghani</h3>
+            <p>diyana.ghani@treasury.gov.my</p>
+            <button class="btn-view-profile">View Profile</button>
+          </div>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-logout-item" id="dropdown-logout-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" x2="9" y1="12" y2="12" />
+            </svg>
+            Logout
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ---- layout wrapper ---------------------------------------------------- -->
+  <div class="dashboard-layout">
+
+    <!-- ---- left sidebar menu ------------------------------------------------ -->
+    <aside class="dashboard-sidebar" id="sidebar">
+      <div class="sidebar-profile">
+        <div class="profile-avatar-wrap">
+          <div class="sidebar-avatar-circle">
+            <img src="assets/img/diyana_avatar.jpg" alt="Avatar">
+          </div>
+          <span class="profile-status-dot"></span>
+        </div>
+        <div class="profile-info">
+          <span class="profile-name">Fatimah Diyana binti Ghani</span>
+          <span class="profile-dropdown-arrow">Pentadbir Sistem</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-menu">
+        <a class="menu-item active-parent expanded" id="menu-utama">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <rect width="7" height="9" x="3" y="3" rx="1" />
+            <rect width="7" height="5" x="14" y="3" rx="1" />
+            <rect width="7" height="9" x="14" y="12" rx="1" />
+            <rect width="7" height="5" x="3" y="16" rx="1" />
+          </svg>
+          Halaman Utama
+          <span class="menu-item-arrow">❯</span>
+        </a>
+        <div class="submenu-list">
+          <a href="dashboard.html" class="submenu-item">Dashboard Utama</a>
+          <a href="dashboard-kpi.html" class="submenu-item active">Dashboard KPI</a>
+        </div>
+
+        <div class="menu-category">Modul Rayuan</div>
+        <a class="menu-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
+            <path d="M14 2v4a2 2 0 0 0 2 2h4" />
+            <path d="M10 9H8" />
+            <path d="M16 13H8" />
+            <path d="M16 17H8" />
+          </svg>
+          Pendaftaran Kes
+          <span class="menu-item-arrow">❯</span>
+        </a>
+        <a class="menu-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+            <line x1="16" y1="2" x2="16" y2="6" />
+            <line x1="8" y1="2" x2="8" y2="6" />
+            <line x1="3" y1="10" x2="21" y2="10" />
+          </svg>
+          Penjadualan Kes
+          <span class="menu-item-arrow">❯</span>
+        </a>
+        <a class="menu-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+            <polyline points="14 2 14 8 20 8" />
+            <path d="m9 15 2 2 4-4" />
+          </svg>
+          Perintah Pemutus
+          <span class="menu-item-arrow">❯</span>
+        </a>
+        <a class="menu-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M21.21 15.89A10 10 0 1 1 8 2.83" />
+            <path d="M22 12A10 10 0 0 0 12 2v10z" />
+          </svg>
+          Laporan
+          <span class="menu-item-arrow">❯</span>
+        </a>
+
+        <div class="menu-category">Tetapan</div>
+        <a class="menu-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+          </svg>
+          Pentadbir
+          <span class="menu-item-arrow">❯</span>
+        </a>
+        <a class="menu-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3" />
+            <path
+              d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+          </svg>
+          Konfigurasi
+          <span class="menu-item-arrow">❯</span>
+        </a>
+        <a class="menu-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M12 20h9" />
+            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
+          </svg>
+          Log Viewer
+          <span class="menu-item-arrow">❯</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <button class="sidebar-bottom-btn" title="Refresh Halaman" onclick="location.reload()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
+            <path d="M16 3h5v5" />
+            <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
+            <path d="M8 21H3v-5" />
+          </svg>
+        </button>
+        <button class="sidebar-bottom-btn" title="Profil Pengguna">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+            <circle cx="12" cy="7" r="4" />
+          </svg>
+        </button>
+        <button class="sidebar-bottom-btn logout" title="Log Keluar" id="logout-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+            <polyline points="16 17 21 12 16 7" />
+            <line x1="21" x2="9" y1="12" y2="12" />
+          </svg>
+        </button>
+      </div>
+    </aside>
+
+    <!-- ---- main content dashboard ------------------------------------------- -->
+    <main class="dashboard-content">
+      <div class="content-title-block">
+        <h1>Dashboard KPI</h1>
+        <p class="breadcrumbs">Halaman Utama <span class="bc-separator">/</span> <span class="bc-active">Dashboard KPI</span></p>
+      </div>
+
+      <!-- Tabs navigation for the slide/carousel dashboard -->
+      <div class="dashboard-tabs">
+        <button class="tab-btn active" data-tab="0">
+          <span class="tab-icon">📊</span> KPI Rayuan & Perintah
+        </button>
+        <button class="tab-btn" data-tab="1">
+          <span class="tab-icon">📝</span> KPI Alasan & Borang N
+        </button>
+      </div>
+
+      <!-- Slide panel viewport container -->
+      <div class="slides-viewport">
+        <div class="slides-wrapper" id="slides-wrapper" style="--slide-count: 2;">
+
+          <!-- Slide Panel 1: KPI Rayuan & Perintah -->
+          <div class="slide-panel">
+            <!-- Chart 1: Peratusan Penyelesaian Rayuan -->
+            <div class="chart-card">
+              <div class="chart-card-header">
+                <h2 class="chart-title">Peratusan Penyelesaian Rayuan bagi tahun <span id="val-year-peratusan">2026</span></h2>
+                <div class="chart-select-wrap">
+                  <select class="chart-select" id="select-year-peratusan">
+                    <option value="2026" selected>2026</option>
+                    <option value="2025">2025</option>
+                    <option value="2024">2024</option>
+                  </select>
+                  <svg class="chart-select-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m6 9 6 6 6-6" />
+                  </svg>
+                </div>
+              </div>
+              <div class="chart-canvas-wrap">
+                <div id="chart-peratusan"></div>
+              </div>
+            </div>
+
+            <!-- Chart 2: Bilangan Pengeluaran Perintah Pemutus -->
+            <div class="chart-card">
+              <div class="chart-card-header">
+                <h2 class="chart-title">Bilangan Pengeluaran Perintah Pemutus bagi tahun <span id="val-year-perintah">2026</span></h2>
+                <div class="chart-select-wrap">
+                  <select class="chart-select" id="select-year-perintah">
+                    <option value="2026" selected>2026</option>
+                    <option value="2025">2025</option>
+                    <option value="2024">2024</option>
+                  </select>
+                  <svg class="chart-select-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m6 9 6 6 6-6" />
+                  </svg>
+                </div>
+              </div>
+              <div class="chart-canvas-wrap">
+                <div id="chart-perintah"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide Panel 2: KPI Alasan & Borang N -->
+          <div class="slide-panel">
+            <!-- Chart 3: Bilangan Alasan Keputusan -->
+            <div class="chart-card">
+              <div class="chart-card-header">
+                <h2 class="chart-title">Bilangan Alasan Keputusan yang dikeluarkan bagi tahun <span id="val-year-alasan">2026</span></h2>
+                <div class="chart-select-wrap">
+                  <select class="chart-select" id="select-year-alasan">
+                    <option value="2026" selected>2026</option>
+                    <option value="2025">2025</option>
+                    <option value="2024">2024</option>
+                  </select>
+                  <svg class="chart-select-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m6 9 6 6 6-6" />
+                  </svg>
+                </div>
+              </div>
+              <div class="chart-canvas-wrap">
+                <div id="chart-alasan"></div>
+              </div>
+            </div>
+
+            <!-- Chart 4: Bilangan Penyelesaian Borang N -->
+            <div class="chart-card">
+              <div class="chart-card-header">
+                <h2 class="chart-title">Bilangan Penyelesaian Borang N bagi tahun <span id="val-year-borangn-kpi">2026</span></h2>
+                <div class="chart-select-wrap">
+                  <select class="chart-select" id="select-year-borangn-kpi">
+                    <option value="2026" selected>2026</option>
+                    <option value="2025">2025</option>
+                    <option value="2024">2024</option>
+                  </select>
+                  <svg class="chart-select-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m6 9 6 6 6-6" />
+                  </svg>
+                </div>
+              </div>
+              <div class="chart-canvas-wrap">
+                <div id="chart-borangn-kpi"></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </main>
+
+  </div>
+
+  <!-- Script for Dashboard KPI Logic and Chart population -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+      // ---- toggle sidebar responsively ------------------------------------
+      const sidebarToggle = document.getElementById("sidebar-toggle");
+      const sidebar = document.getElementById("sidebar");
+
+      sidebarToggle.addEventListener("click", function (e) {
+        e.stopPropagation();
+        sidebar.classList.toggle("is-open");
+      });
+
+      document.addEventListener("click", function () {
+        sidebar.classList.remove("is-open");
+      });
+
+      sidebar.addEventListener("click", function (e) {
+        e.stopPropagation();
+      });
+
+      // ---- toggle profile dropdown ----------------------------------------
+      const profileTrigger = document.getElementById("profile-dropdown-trigger");
+      const profileDropdown = document.getElementById("profile-dropdown");
+
+      profileTrigger.addEventListener("click", function (e) {
+        e.stopPropagation();
+        profileDropdown.classList.toggle("is-open");
+      });
+
+      document.addEventListener("click", function () {
+        profileDropdown.classList.remove("is-open");
+      });
+
+      profileDropdown.addEventListener("click", function (e) {
+        e.stopPropagation();
+      });
+
+      // ---- dropdown logout ------------------------------------------------
+      document.getElementById("dropdown-logout-btn").addEventListener("click", function (e) {
+        e.preventDefault();
+        window.location.href = "index.html";
+      });
+
+      // ---- logout ---------------------------------------------------------
+      document.getElementById("logout-btn").addEventListener("click", function () {
+        window.location.href = "index.html";
+      });
+
+      // ---- sidebar menu expander -----------------------------------------
+      const menuUtama = document.getElementById("menu-utama");
+      const submenuList = document.querySelector(".submenu-list");
+
+      menuUtama.addEventListener("click", function (e) {
+        e.preventDefault();
+        const isOpen = submenuList.style.display !== "none";
+        submenuList.style.display = isOpen ? "none" : "block";
+        menuUtama.classList.toggle("expanded", !isOpen);
+      });
+
+      // ---- dashboard slider tabs switcher --------------------------------
+      const tabBtns = document.querySelectorAll(".tab-btn");
+      const slidesWrapper = document.getElementById("slides-wrapper");
+
+      tabBtns.forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          // Remove active class from all tabs
+          tabBtns.forEach(b => b.classList.remove("active"));
+          // Add active class to clicked tab
+          btn.classList.add("active");
+          // Slide to corresponding panel
+          const tabIndex = btn.getAttribute("data-tab");
+          slidesWrapper.style.transform = "translateX(-" + (tabIndex * 50) + "%)";
+        });
+      });
+
+      // ====================================================================
+      // DUMMY DATA POOL FOR KPI
+      // ====================================================================
+      const MONTHS = ["Jan", "Feb", "Mac", "Apr", "Mei", "Jun", "Jul", "Ogo", "Sep", "Okt", "Nov", "Dis"];
+      const QUARTERS = ["Quarter 1", "Quarter 2", "Quarter 3", "Quarter 4"];
+
+      const DUMMY_DATA = {
+        2026: {
+          peratusan: [85, 90, 88, 92],
+          perintah: [15, 22, 18, 25, 30, 28, 35, 40, 38, 42, 45, 50],
+          alasan: [8, 12, 10, 15, 14, 18, 20, 22, 19, 25, 24, 28],
+          borangn: [14, 20, 16, 22, 25, 24, 30, 32, 28, 35, 33, 38]
+        },
+        2025: {
+          peratusan: [80, 84, 82, 86],
+          perintah: [12, 18, 15, 20, 24, 22, 28, 30, 26, 35, 38, 40],
+          alasan: [6, 9, 8, 12, 10, 14, 15, 18, 16, 20, 18, 22],
+          borangn: [10, 15, 12, 18, 20, 18, 24, 25, 22, 28, 26, 30]
+        },
+        2024: {
+          peratusan: [75, 78, 80, 83],
+          perintah: [10, 14, 12, 16, 18, 15, 20, 22, 18, 25, 28, 30],
+          alasan: [4, 7, 6, 9, 8, 10, 12, 14, 11, 15, 14, 18],
+          borangn: [8, 12, 10, 14, 15, 13, 18, 20, 16, 22, 20, 24]
+        }
+      };
+
+      // ====================================================================
+      // CHART DRILL-DOWN HELPERS
+      // Click any bar/point on any chart to open a detailed data-table modal
+      // for that data point (see js/drilldown-modal.js).
+      // ====================================================================
+      function handleApexClick(chartTitle, yearSelectId, categories) {
+        return function (event, chartContext, config) {
+          if (config.dataPointIndex === undefined || config.dataPointIndex < 0) return;
+          
+          let seriesIndex = config.seriesIndex;
+          if (seriesIndex === undefined || seriesIndex < 0) {
+            seriesIndex = 0;
+          }
+          
+          const label = categories[config.dataPointIndex];
+          const seriesObj = chartContext.w.config.series[seriesIndex];
+          
+          let datasetLabel = "";
+          let value = 0;
+          if (typeof seriesObj === "number") {
+            // Pie/Donut Chart
+            datasetLabel = label;
+            value = chartContext.w.config.series[config.dataPointIndex];
+          } else if (seriesObj && Array.isArray(seriesObj.data)) {
+            // Bar/Line/Area Chart
+            datasetLabel = seriesObj.name || "";
+            value = seriesObj.data[config.dataPointIndex];
+          }
+          const yr = document.getElementById(yearSelectId).value;
+          
+          window.openChartDrilldown({
+            title: chartTitle,
+            contextLabel: label,
+            datasetLabel: datasetLabel,
+            year: yr,
+            value: value,
+            seedKey: chartTitle + "|" + label + "|" + datasetLabel + "|" + yr
+          });
+        };
+      }
+
+      // ====================================================================
+      // CHART INITIALIZATION (APEXCHARTS)
+      // ====================================================================
+
+      // Chart 1: Peratusan Penyelesaian Rayuan
+      const optionsPeratusan = {
+        series: [{ name: 'Peratusan Penyelesaian Rayuan (%)', data: DUMMY_DATA[2026].peratusan }],
+        chart: {
+          type: 'area',
+          height: '100%',
+          background: 'transparent',
+          toolbar: { show: false },
+          events: {
+            click: handleApexClick('Peratusan Penyelesaian Rayuan', 'select-year-peratusan', QUARTERS),
+            dataPointSelection: handleApexClick('Peratusan Penyelesaian Rayuan', 'select-year-peratusan', QUARTERS)
+          }
+        },
+        theme: { mode: 'dark' },
+        colors: ['#ff007f'],
+        fill: {
+          type: 'gradient',
+          gradient: { shadeIntensity: 1, opacityFrom: 0.25, opacityTo: 0.05 }
+        },
+        stroke: { curve: 'smooth', width: 2.5 },
+        markers: {
+          size: 5,
+          strokeWidth: 2,
+          hover: {
+            size: 7
+          }
+        },
+        dataLabels: { enabled: false },
+        grid: { borderColor: 'rgba(255, 255, 255, 0.08)' },
+        xaxis: {
+          categories: QUARTERS,
+          labels: { style: { fontFamily: 'Montserrat, sans-serif', colors: '#94a3b8' } }
+        },
+        yaxis: {
+          max: 100,
+          labels: { style: { fontFamily: 'Montserrat, sans-serif', colors: '#94a3b8' } }
+        },
+        tooltip: {
+          theme: 'dark',
+          followCursor: true
+        }
+      };
+      const chartPeratusan = new ApexCharts(document.querySelector("#chart-peratusan"), optionsPeratusan);
+      chartPeratusan.render();
+
+      // Chart 2: Bilangan Pengeluaran Perintah Pemutus
+      const optionsPerintah = {
+        series: [{ name: 'Bilangan Perintah Pemutus (n)', data: DUMMY_DATA[2026].perintah }],
+        chart: {
+          type: 'bar',
+          height: '100%',
+          background: 'transparent',
+          toolbar: { show: false },
+          events: {
+            dataPointSelection: handleApexClick('Bilangan Pengeluaran Perintah Pemutus', 'select-year-perintah', MONTHS)
+          }
+        },
+        theme: { mode: 'dark' },
+        colors: ['#00f2fe'],
+        fill: {
+          type: 'gradient',
+          gradient: {
+            shade: 'dark',
+            type: 'vertical',
+            shadeIntensity: 0.5,
+            gradientToColors: ['#3b82f6'], // Fades from Cyan to Blue
+            inverseColors: false,
+            opacityFrom: 1,
+            opacityTo: 0.85,
+            stops: [0, 100]
+          }
+        },
+        plotOptions: {
+          bar: {
+            borderRadius: 4,
+            columnWidth: '40%'
+          }
+        },
+        dataLabels: { enabled: false },
+        grid: { borderColor: 'rgba(255, 255, 255, 0.08)' },
+        xaxis: {
+          categories: MONTHS,
+          labels: { style: { fontFamily: 'Montserrat, sans-serif', colors: '#94a3b8' } }
+        },
+        yaxis: {
+          labels: { style: { fontFamily: 'Montserrat, sans-serif', colors: '#94a3b8' } }
+        },
+        tooltip: { theme: 'dark' }
+      };
+      const chartPerintah = new ApexCharts(document.querySelector("#chart-perintah"), optionsPerintah);
+      chartPerintah.render();
+
+      // Chart 3: Bilangan Alasan Keputusan
+      const optionsAlasan = {
+        series: [{ name: 'Bilangan Alasan Keputusan (n)', data: DUMMY_DATA[2026].alasan }],
+        chart: {
+          type: 'bar',
+          height: '100%',
+          background: 'transparent',
+          toolbar: { show: false },
+          events: {
+            dataPointSelection: handleApexClick('Bilangan Alasan Keputusan', 'select-year-alasan', MONTHS)
+          }
+        },
+        theme: { mode: 'dark' },
+        colors: ['#00e676'],
+        fill: {
+          type: 'gradient',
+          gradient: {
+            shade: 'dark',
+            type: 'vertical',
+            shadeIntensity: 0.5,
+            gradientToColors: ['#00a389'], // Green to Mint
+            inverseColors: false,
+            opacityFrom: 1,
+            opacityTo: 0.85,
+            stops: [0, 100]
+          }
+        },
+        plotOptions: {
+          bar: {
+            borderRadius: 4,
+            columnWidth: '40%'
+          }
+        },
+        dataLabels: { enabled: false },
+        grid: { borderColor: 'rgba(255, 255, 255, 0.08)' },
+        xaxis: {
+          categories: MONTHS,
+          labels: { style: { fontFamily: 'Montserrat, sans-serif', colors: '#94a3b8' } }
+        },
+        yaxis: {
+          labels: { style: { fontFamily: 'Montserrat, sans-serif', colors: '#94a3b8' } }
+        },
+        tooltip: { theme: 'dark' }
+      };
+      const chartAlasan = new ApexCharts(document.querySelector("#chart-alasan"), optionsAlasan);
+      chartAlasan.render();
+
+      // Chart 4: Bilangan Penyelesaian Borang N KPI
+      const optionsBorangnKpi = {
+        series: [{ name: 'Bilangan Borang N (n)', data: DUMMY_DATA[2026].borangn }],
+        chart: {
+          type: 'bar',
+          height: '100%',
+          background: 'transparent',
+          toolbar: { show: false },
+          events: {
+            dataPointSelection: handleApexClick('Bilangan Penyelesaian Borang N', 'select-year-borangn-kpi', MONTHS)
+          }
+        },
+        theme: { mode: 'dark' },
+        colors: ['#f97316'],
+        fill: {
+          type: 'gradient',
+          gradient: {
+            shade: 'dark',
+            type: 'vertical',
+            shadeIntensity: 0.5,
+            gradientToColors: ['#ef4444'], // Orange to Red
+            inverseColors: false,
+            opacityFrom: 1,
+            opacityTo: 0.85,
+            stops: [0, 100]
+          }
+        },
+        plotOptions: {
+          bar: {
+            borderRadius: 4,
+            columnWidth: '40%'
+          }
+        },
+        dataLabels: { enabled: false },
+        grid: { borderColor: 'rgba(255, 255, 255, 0.08)' },
+        xaxis: {
+          categories: MONTHS,
+          labels: { style: { fontFamily: 'Montserrat, sans-serif', colors: '#94a3b8' } }
+        },
+        yaxis: {
+          labels: { style: { fontFamily: 'Montserrat, sans-serif', colors: '#94a3b8' } }
+        },
+        tooltip: { theme: 'dark' }
+      };
+      const chartBorangnKpi = new ApexCharts(document.querySelector("#chart-borangn-kpi"), optionsBorangnKpi);
+      chartBorangnKpi.render();
+
+      // ====================================================================
+      // EVENT LISTENERS FOR YEAR SELECTORS
+      // ====================================================================
+
+      // Update Chart 1 (Peratusan)
+      document.getElementById("select-year-peratusan").addEventListener("change", function () {
+        const yr = this.value;
+        document.getElementById("val-year-peratusan").textContent = yr;
+        chartPeratusan.updateSeries([{ name: 'Peratusan Penyelesaian Rayuan (%)', data: DUMMY_DATA[yr].peratusan }]);
+      });
+
+      // Update Chart 2 (Perintah)
+      document.getElementById("select-year-perintah").addEventListener("change", function () {
+        const yr = this.value;
+        document.getElementById("val-year-perintah").textContent = yr;
+        chartPerintah.updateSeries([{ name: 'Bilangan Perintah Pemutus (n)', data: DUMMY_DATA[yr].perintah }]);
+      });
+
+      // Update Chart 3 (Alasan)
+      document.getElementById("select-year-alasan").addEventListener("change", function () {
+        const yr = this.value;
+        document.getElementById("val-year-alasan").textContent = yr;
+        chartAlasan.updateSeries([{ name: 'Bilangan Alasan Keputusan (n)', data: DUMMY_DATA[yr].alasan }]);
+      });
+
+      // Update Chart 4 (Borang N KPI)
+      document.getElementById("select-year-borangn-kpi").addEventListener("change", function () {
+        const yr = this.value;
+        document.getElementById("val-year-borangn-kpi").textContent = yr;
+        chartBorangnKpi.updateSeries([{ name: 'Bilangan Borang N (n)', data: DUMMY_DATA[yr].borangn }]);
+      });
+
+    });
+  </script>
+</body>
+
+</html>

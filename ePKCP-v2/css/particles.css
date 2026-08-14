@@ -1,0 +1,63 @@
+/* Particle background layers — purely decorative, sit behind all existing
+   page content (z-index:0, same stacking level as .hero/.login-card/footer
+   but earlier in DOM order so it paints first / lowest). Never intercepts
+   clicks meant for the form or cards: the network layer only receives
+   pointer events where nothing else is drawn on top of it, and the glow
+   layer is non-interactive by design. */
+.particles-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+}
+
+#particles-glow {
+  pointer-events: none;
+}
+
+/* Glow so the bubbles read clearly against the busy background photo
+   instead of blending into it — a plain flat dot at low opacity was nearly
+   invisible over the photo's own detail. */
+.particles-layer canvas {
+  filter: drop-shadow(0 0 3px rgba(0, 229, 255, 0.85)) drop-shadow(0 0 7px rgba(0, 229, 255, 0.5));
+}
+
+/* Respect prefers-reduced-motion at the container level too, as a visual
+   safety net independent of the JS-side check in particles-config.js. */
+@media (prefers-reduced-motion: reduce) {
+  .particles-layer canvas {
+    animation: none !important;
+  }
+}
+
+/* CSS-only fallback (activated by particles-config.js only if tsParticles
+   fails to actually paint a canvas — see the watchdog in init()). Three
+   layered dot fields drifting slowly at different scales/speeds, so the
+   background still reads as a gentle connected-network glow even without
+   the canvas engine. Same enterprise palette as the primary layers. */
+.particles-layer.particles-fallback {
+  background-image:
+    radial-gradient(circle, rgba(0, 229, 255, 0.32) 1px, transparent 1.6px),
+    radial-gradient(circle, rgba(110, 231, 255, 0.24) 1px, transparent 1.6px),
+    radial-gradient(circle, rgba(139, 92, 246, 0.22) 1px, transparent 1.6px);
+  background-size: 130px 130px, 190px 190px, 240px 240px;
+  background-position: 0 0, 40px 80px, 100px 20px;
+  animation: particles-fallback-drift 70s linear infinite;
+}
+
+@keyframes particles-fallback-drift {
+  to {
+    background-position: 130px 130px, -150px 270px, -140px -220px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Slowed down, not frozen — this is decorative background motion, and a
+     fully static page reads as "broken" rather than "accessible". Machines
+     with Windows' "Animation effects" setting off report reduced-motion
+     globally, so this path is common, not an edge case. */
+  .particles-layer.particles-fallback {
+    animation-duration: 200s;
+  }
+}
