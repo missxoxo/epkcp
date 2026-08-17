@@ -49,15 +49,60 @@
    fits within one screen without scrolling on typical desktop sizes. */
 .modal-dialog {
   position: relative;
-  width: min(920px, 100%);
-  max-height: min(86vh, 700px);
+  width: min(1100px, 94vw);
+  /* As generous as the viewport allows — the default (non-expanded)
+     two-column layout's content should essentially never hit this, so no
+     vertical scrollbar shows up there. .is-expanded below overrides this
+     with a deliberately *tighter* cap instead, since that's the one
+     layout tall enough (form stacked above a full-width table) to
+     actually need scrolling. */
+  max-height: min(96vh, 900px);
   border-radius: 24px;
   background: linear-gradient(160deg,#0c2f68,#020b1d 55%,#0a2749);
   border: 1px solid #adcaee4d;
   box-shadow: 0 30px 80px #000a, inset 0 0 40px #2563b422;
   transform: translateY(26px) scale(.96);
   opacity: 0;
-  transition: transform .34s cubic-bezier(.2,.8,.2,1), opacity .28s ease;
+  transition: transform .34s cubic-bezier(.2,.8,.2,1), opacity .28s ease,
+    width .36s cubic-bezier(.2,.8,.2,1), max-height .36s cubic-bezier(.2,.8,.2,1);
+}
+
+/* Expanded state — triggered by the results table's "Kembangkan" toggle.
+   Widening the dialog alone still splits the extra space with the form
+   column, which isn't enough for a 7-column table on common laptop
+   widths — so expanding also drops the two-column split: form moves
+   above, results/table take the dialog's full width underneath. That's
+   what actually removes the table's horizontal scroll. */
+.modal-dialog.is-expanded {
+  width: min(1440px, 96vw);
+  /* Deliberately tighter than the default max-height above — the stacked
+     layout (form above a full-width table) is genuinely taller than this
+     on any realistic screen, so the vertical scrollbar reliably shows up
+     here and only here. */
+  max-height: min(82vh, 740px);
+}
+
+.modal-dialog.is-expanded .modal-scroll {
+  max-height: min(82vh, 740px);
+}
+
+.modal-dialog.is-expanded .modal-body {
+  grid-template-columns: 1fr;
+}
+
+.modal-dialog.is-expanded .semakan-results {
+  padding-left: 0;
+  border-left: 0;
+  padding-top: 28px;
+  margin-top: 8px;
+  border-top: 1px solid #ffffff1c;
+}
+
+/* Stacking the form full-width would stretch its inputs to an awkward
+   ~1300px — cap it so only the table (which actually needs the room)
+   takes the full expanded width. */
+.modal-dialog.is-expanded #semakan-form {
+  max-width: 480px;
 }
 
 .modal-overlay.is-open .modal-dialog {
@@ -66,13 +111,13 @@
 }
 
 .modal-scroll {
-  max-height: min(86vh, 700px);
+  max-height: min(96vh, 900px);
   overflow-y: auto;
   overflow-x: hidden;
   padding: 40px 40px 34px;
   scrollbar-width: thin;
   scrollbar-color: #4a7bb877 transparent;
-  transition: scrollbar-color .25s ease;
+  transition: scrollbar-color .25s ease, max-height .36s cubic-bezier(.2,.8,.2,1);
 }
 
 /* Firefox has no thumb-level :hover pseudo — brightening the whole
@@ -156,9 +201,20 @@
    responsive block at the bottom of this file). */
 .modal-body {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  /* Results carry a 7-column table, so give that side noticeably more
+     room than the form — otherwise the table needs horizontal scroll
+     even on a wide dialog. */
+  grid-template-columns: 0.78fr 1.22fr;
   gap: 12px 36px;
   align-items: start;
+  transition: opacity .15s ease;
+}
+
+/* Applied briefly by the [+]/[−] toggle while it swaps
+   grid-template-columns underneath (a hard, un-animatable snap) — the
+   dip masks that reflow as a soft cross-fade instead of a jump-cut. */
+.modal-body.is-morphing {
+  opacity: .25;
 }
 
 .modal-head {
@@ -375,6 +431,17 @@
   margin-bottom: 24px;
 }
 
+/* Wraps just the icon + title/subtitle so the icon's hover lift is scoped
+   to hovering *that*, not the whole header row — otherwise hovering the
+   Cetak PDF / expand buttons (also inside .semakan-card-head) would
+   trigger it too. */
+.semakan-card-title {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+}
+
 .semakan-card-icon {
   flex: 0 0 46px;
   width: 46px;
@@ -400,7 +467,7 @@
   stroke-linejoin: round;
 }
 
-.semakan-card-head:hover .semakan-card-icon {
+.semakan-card-title:hover .semakan-card-icon {
   transform: translateY(-2px) scale(1.05);
   background: linear-gradient(135deg, rgba(8, 217, 239, 0.25), rgba(7, 83, 233, 0.25));
   border-color: #08d9ef;
@@ -414,6 +481,181 @@
   font-weight: 700;
   color: #fff;
   letter-spacing: -0.3px;
+}
+
+/* ---- card head actions: Cetak PDF + expand toggle -------------------- */
+.card-head-actions {
+  margin-left: auto;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.card-action-btn {
+  position: relative;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 38px;
+  padding: 0 16px 0 12px;
+  border-radius: 999px;
+  font: 600 12.5px Montserrat, Arial, sans-serif;
+  letter-spacing: .2px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background .2s ease, border-color .2s ease, color .2s ease,
+    box-shadow .2s ease, transform .2s ease;
+}
+
+.card-action-icon {
+  width: 16px;
+  height: 16px;
+  stroke: currentColor;
+  fill: none;
+  flex: 0 0 auto;
+}
+
+.card-action-btn:active {
+  transform: translateY(0);
+}
+
+.card-action-btn[hidden] {
+  display: none;
+}
+
+/* Icon-only variant (the [+]/[−] expand toggle) — a square button instead
+   of the label pill, icon centered with no side padding. */
+.icon-only-btn {
+  width: 38px;
+  padding: 0;
+  justify-content: center;
+  border-radius: 11px;
+}
+
+.icon-only-btn .card-action-icon {
+  width: 17px;
+  height: 17px;
+}
+
+/* Cetak PDF and expand/collapse — same solid cyan→blue gradient (the
+   panel's own accent) rather than a transparent outline, so both read as
+   equally real actions. Hover only brightens the gradient and lifts the
+   button a touch — no added glow/shine ring around it, just a calm color
+   shift. is-active (expanded) gets a persistent inset ring instead of an
+   outer glow, so the "on" state stays visible without looking shiny. */
+#print-pdf-btn,
+.expand-toggle {
+  border: 1px solid #ffffff2a;
+  background: linear-gradient(120deg, #08d9ef99, #0753e999 65%);
+  color: #fff;
+  box-shadow: 0 4px 12px -6px #000a, inset 0 1px 0 #ffffff30;
+}
+
+#print-pdf-btn:hover,
+.expand-toggle:hover {
+  background: linear-gradient(120deg, #08d9efcc, #0753e9cc 65%);
+  border-color: #ffffff40;
+  transform: translateY(-1px);
+}
+
+.expand-toggle.is-active {
+  background: linear-gradient(120deg, #08d9efcc, #0753e9cc 65%);
+  border-color: #08d9ef;
+  color: #fff;
+  box-shadow: 0 4px 12px -6px #000a, inset 0 0 0 1px #08d9ef55, inset 0 1px 0 #ffffff30;
+}
+
+/* Icon swaps to a plain minus once expanded. Both icons sit stacked on
+   top of each other (absolutely positioned within the button) and
+   cross-fade with a small rotate+scale — the old display:none/flex swap
+   snapped instantly with no transition at all, which read as a jarring
+   flicker on click. */
+.expand-toggle .card-action-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(0deg) scale(1);
+  opacity: 1;
+  transition: opacity .2s ease, transform .2s cubic-bezier(.3, .7, .4, 1);
+}
+
+.expand-toggle .icon-minus {
+  opacity: 0;
+  transform: translate(-50%, -50%) rotate(-80deg) scale(.4);
+}
+
+.expand-toggle.is-active .icon-plus {
+  opacity: 0;
+  transform: translate(-50%, -50%) rotate(80deg) scale(.4);
+}
+
+.expand-toggle.is-active .icon-minus {
+  opacity: 1;
+  transform: translate(-50%, -50%) rotate(0deg) scale(1);
+}
+
+/* ---- tooltips ---------------------------------------------------------
+   Lightweight CSS-only tooltip for [data-tooltip] elements. Anchored to
+   the trigger's right edge (not centered) because these buttons live at
+   the far-right edge of the results header — a centered bubble would run
+   past .modal-scroll's overflow-x:hidden and get clipped. */
+[data-tooltip] {
+  position: relative;
+}
+
+[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  top: calc(100% + 11px);
+  right: 0;
+  width: max-content;
+  max-width: 230px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: #0b1830;
+  color: #eef2fa;
+  font: 600 11.5px/1.45 Montserrat, Arial, sans-serif;
+  letter-spacing: 0;
+  white-space: normal;
+  text-align: left;
+  border: 1px solid #ffffff22;
+  box-shadow: 0 14px 30px #000a;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(-4px);
+  transition: opacity .16s ease, transform .16s ease, visibility .16s;
+  z-index: 30;
+}
+
+[data-tooltip]::before {
+  content: "";
+  position: absolute;
+  top: 100%;
+  right: 14px;
+  margin-top: 3px;
+  border: 6px solid transparent;
+  border-bottom-color: #0b1830;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .16s ease, visibility .16s;
+  z-index: 30;
+}
+
+[data-tooltip]:hover::after,
+[data-tooltip]:focus-visible::after,
+[data-tooltip]:hover::before,
+[data-tooltip]:focus-visible::before {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+[data-tooltip][hidden]::after,
+[data-tooltip][hidden]::before {
+  display: none;
 }
 
 .results-state {
@@ -490,35 +732,54 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Found result — reference number + status badge + detail rows. */
+/* Found result — taxpayer info (Nama/No. Cukai) + case records table. */
 .result-found {
   text-align: left;
   padding: 2px 2px 4px;
   animation: semakan-fade-in .35s ease;
 }
 
-.result-found-top {
+/* Stacked rows (not side-by-side columns) — Nama and No. Cukai each get
+   the block's full width on their own line, so either one has the most
+   room possible before wrapping. A long No. Cukai squeezed into a narrow
+   ~35% column was the direct cause of ugly single-character orphan
+   breaks; a full-width row all but eliminates that. */
+.kes-info-block {
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 14px;
+  flex-direction: column;
   margin-bottom: 18px;
-  flex-wrap: wrap;
+  padding: 4px 18px;
+  border-radius: 14px;
+  background: #ffffff08;
+  border: 1px solid #ffffff14;
 }
 
-.result-ref-label {
+.kes-info-item {
+  min-width: 0;
+  padding: 12px 0;
+}
+
+.kes-info-item + .kes-info-item {
+  border-top: 1px solid #ffffff0f;
+}
+
+.kes-info-label {
+  display: block;
   font-size: 11.5px;
   text-transform: uppercase;
-  letter-spacing: .6px;
+  letter-spacing: .5px;
   color: #8fa0bf;
-  margin: 0 0 4px;
+  margin-bottom: 4px;
 }
 
-.result-ref-value {
-  font-size: 19px;
+.kes-info-value {
+  display: block;
+  font-size: 15px;
   font-weight: 700;
   color: #fff;
-  letter-spacing: .3px;
+  overflow-wrap: break-word;
+  word-break: normal;
+  line-height: 1.4;
 }
 
 .status-badge {
@@ -541,37 +802,114 @@
   background: currentColor;
 }
 
-.result-detail-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px 20px;
-  padding: 18px;
+/* Case records table — horizontally scrollable within its own container
+   so seven columns never force the two-column modal layout to widen or
+   clip; the modal shell itself stays put. Outer shadow + top highlight
+   give the whole table a raised "panel" depth, matching the glass/shadow
+   language used by the buttons and card icon elsewhere in this dialog. */
+.kes-table-wrap {
+  overflow-x: auto;
   border-radius: 14px;
-  background: #ffffff08;
   border: 1px solid #ffffff14;
+  background: linear-gradient(180deg, #ffffff05, #ffffff00 45%);
+  box-shadow: 0 16px 36px -16px #000a, inset 0 1px 0 #ffffff12;
+  scrollbar-width: thin;
+  scrollbar-color: #4a7bb877 transparent;
 }
 
-.result-detail-grid .detail-item {
-  min-width: 0;
+.kes-table-wrap::-webkit-scrollbar {
+  height: 9px;
 }
 
-.result-detail-grid .detail-label {
-  display: block;
-  font-size: 11.5px;
-  color: #8fa0bf;
-  margin-bottom: 4px;
+.kes-table-wrap::-webkit-scrollbar-thumb {
+  background-color: #4a7bb877;
+  border-radius: 999px;
 }
 
-.result-detail-grid .detail-value {
-  display: block;
-  font-size: 14px;
-  font-weight: 600;
+.kes-table {
+  width: 100%;
+  min-width: 620px;
+  border-collapse: collapse;
+  font-size: 12.5px;
+}
+
+.kes-table th,
+.kes-table td {
+  padding: 11px 12px;
+  text-align: left;
+}
+
+.kes-table td {
+  /* Data stays on one line — dates/amounts/names read worse broken
+     mid-value, and none of them are long enough to need it. */
+  white-space: nowrap;
+}
+
+.kes-table th {
+  /* Headers are the widest thing in most columns (two/three uppercase
+     words) — letting them wrap to two lines is what actually lets a
+     column shrink instead of being pinned to its header's single-line
+     width. */
+  white-space: normal;
+  line-height: 1.3;
+}
+
+.kes-table thead th {
+  background: linear-gradient(180deg, #08d9ef22, #08d9ef08);
+  color: #8fd8ff;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .4px;
+  box-shadow: inset 0 -1px 0 #ffffff26, inset 0 1px 0 #ffffff10;
+}
+
+.kes-table tbody tr {
+  border-bottom: 1px solid #ffffff0f;
+  transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+}
+
+.kes-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+/* Zebra striping — alternating row shade so one row reads as distinct
+   from the next at a glance, without relying on the border alone. */
+.kes-table tbody tr:nth-child(even) {
+  background: #ffffff05;
+}
+
+/* Hovered row lifts slightly off the table, like a raised card, instead
+   of just swapping a flat background color. */
+.kes-table tbody tr:hover {
+  position: relative;
+  background: #08d9ef14;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px -6px #08d9ef55, inset 0 0 0 1px #08d9ef2a;
+}
+
+.kes-table td {
   color: #eef2fa;
-  word-break: break-word;
+  font-weight: 500;
+}
+
+.kes-table td .status-badge {
+  padding: 5px 12px;
+  font-size: 11.5px;
+  box-shadow: 0 2px 6px -1px #00000040, inset 0 1px 0 #ffffff26;
+}
+
+.kes-table .kes-empty-row td {
+  text-align: center;
+  padding: 30px 14px;
+  color: #64748b;
+  font-weight: 600;
+  white-space: normal;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .modal-overlay, .modal-dialog, .pin-field { transition: none; }
+  .modal-overlay, .modal-dialog, .pin-field, .card-action-btn, [data-tooltip]::after, [data-tooltip]::before,
+  .expand-toggle .card-action-icon, .modal-body { transition: none; }
   .results-loading .spinner { animation: none; }
   .results-state, .result-found { animation: none; }
 }
@@ -603,7 +941,7 @@ button.check-status:hover small {
 /* Below this width the two-column landscape layout gets too cramped —
    collapse back to a single stacked column (form, then results). */
 @media (max-width: 820px) {
-  .modal-dialog { width: min(600px, 100%); max-height: min(88vh, 860px); }
+  .modal-dialog, .modal-dialog.is-expanded { width: min(600px, 100%); max-height: min(88vh, 860px); }
   .modal-scroll { max-height: min(88vh, 860px); }
   .modal-body { grid-template-columns: 1fr; }
   .semakan-results {
@@ -613,6 +951,9 @@ button.check-status:hover small {
     margin-top: 8px;
     border-top: 1px solid #ffffff1c;
   }
+  /* No room to expand into on a stacked single-column layout — the case
+     table already relies on its own horizontal scroll here. */
+  .expand-toggle { display: none; }
 }
 
 @media (max-width: 640px) {
@@ -622,7 +963,6 @@ button.check-status:hover small {
   .modal-head h2 { font-size: 20px; }
   .semakan-actions { flex-direction: column; }
   .semakan-actions .btn-search, .btn-reset { flex: 1 1 auto; }
-  .result-detail-grid { grid-template-columns: 1fr; }
 }
 
 .semakan-card-head small{
@@ -633,9 +973,134 @@ button.check-status:hover small {
     font-weight:500;
 }
 
-.semakan-card-head:hover .semakan-card-icon{
+.semakan-card-title:hover .semakan-card-icon{
     transform:translateY(-3px);
     box-shadow:
         0 18px 35px rgba(37,99,235,.45),
         0 0 18px rgba(34,211,238,.45);
+}
+
+/* ---- Cetak PDF ---------------------------------------------------------
+   #print-area is populated by js/semakan-modal.js right before
+   window.print() and stays empty/hidden otherwise — it only ever becomes
+   visible under @media print, and only itself (everything else in the
+   page is switched off for the print pass). Light theme on purpose: a
+   dark-background printout wastes ink and photocopies badly. */
+#print-area {
+  display: none;
+}
+
+@media print {
+  /* The page's own dark theme (html/body background, particle layers)
+     would otherwise show through behind #print-area and swallow the
+     printout's dark-on-white text. */
+  html, body {
+    background: #fff !important;
+  }
+
+  body > main,
+  body > .modal-overlay {
+    display: none !important;
+  }
+
+  #print-area {
+    display: block;
+    background: #fff;
+  }
+
+  .print-doc {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 12px 4px;
+    background: #fff;
+    color: #12182a;
+    font-family: Arial, Helvetica, sans-serif;
+    /* Status badge colors carry meaning (Ditolak vs Diluluskan, etc.) —
+       force them to print instead of depending on the user having
+       "print background graphics" switched on. */
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .print-header {
+    margin-bottom: 22px;
+    padding-bottom: 14px;
+    border-bottom: 2px solid #12182a;
+  }
+
+  .print-header h1 {
+    margin: 0 0 4px;
+    font-size: 19px;
+    font-weight: 700;
+  }
+
+  .print-header p {
+    margin: 0;
+    font-size: 13px;
+    color: #444;
+  }
+
+  .print-meta {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 22px;
+    font-size: 13px;
+  }
+
+  .print-meta th,
+  .print-meta td {
+    text-align: left;
+    padding: 5px 0;
+  }
+
+  .print-meta th {
+    width: 140px;
+    color: #444;
+    font-weight: 600;
+  }
+
+  .print-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11.5px;
+  }
+
+  .print-table th,
+  .print-table td {
+    border: 1px solid #b9c0cc;
+    padding: 7px 8px;
+    text-align: left;
+  }
+
+  .print-table thead th {
+    background: #eef1f7;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .3px;
+    font-size: 10px;
+  }
+
+  .print-table tbody tr:nth-child(even) {
+    background: #f7f9fc;
+  }
+
+  .print-table .status-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 10.5px;
+  }
+
+  .print-footer {
+    margin-top: 22px;
+    padding-top: 12px;
+    border-top: 1px solid #b9c0cc;
+    font-size: 10.5px;
+    color: #555;
+  }
+
+  .print-footer p {
+    margin: 2px 0;
+  }
 }
